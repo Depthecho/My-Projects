@@ -1,0 +1,17 @@
+{% extends 'pagestore/base.html' %}
+{% load static %}
+
+{% block title %}Log In{% endblock %}
+{% block body %}
+<div class="login-box">
+  <form method="post">
+    <h2>Log In</h2>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="login_button">
+      <button type="submit">Log In</button>
+    </div>
+    <p class="dont-have-account">Don't have an account?<a href ="{% url 'signuppage' %}">Sign Up</a></p>
+  </form>
+</div>
+{% endblock %}

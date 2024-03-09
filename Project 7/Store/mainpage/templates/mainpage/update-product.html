@@ -1,0 +1,27 @@
+{% extends 'mainpage/base.html' %}
+{% load static %}
+{% block title %}Update product{% endblock %}
+
+{% block content %}
+{% include 'mainpage/main_header.html' %}
+<div class="product-detail-body">
+
+    <div class="empty-space">
+        <h1 class="store-header">
+            Product update
+        </h1>
+    </div>
+
+    <section class="product-detail-main">
+        <div class="product-detail-content">
+            <div class="product-detail-container height-1300">
+                <form method="post" class="update-product-form">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit">Update</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

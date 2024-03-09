@@ -1,0 +1,70 @@
+{% extends 'mainpage/base.html' %}
+{% load static %}
+
+{% block title %}Favorite List{% endblock %}
+
+{% block content %}
+{% include 'mainpage/main_header.html' %}
+<div class="store-page-body">
+
+    <div class="favorite-list-body">
+        <div class="empty-space">
+            <h1 class="store-header">
+                My favorite List
+            </h1>
+        </div>
+
+        <section class="favorite-list-main">
+            <div class="favorite-list-content">
+               <div class="favorite-list-container{% if favorite_products|length < 9 %} height-1300{% endif %}">
+                    {% if favorite_products %}
+                    {% for product in favorite_products %}
+                    <div class="products">
+                        {% if product in request.user.favorite_products.all %}
+                        <a href="{% url 'remove-from-favorite-fav' product.id %}"><i class="favorite-good bx bxs-star"></i></a>
+                        {% else %}
+                        <a href="{% url 'add-to-favorite' product.id %}"><i class="favorite-good bx bx-star"></i></a>
+                        {% endif %}
+                        <h2><a href="{% url 'product-detail' product.slug %}">{{ product.name }}</a></h2>
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% endif %}
+                        <p><b>Category:</b> {{ product.category }}</p>
+                        <p><b>Price:</b> ${{ product.price }}</p>
+                        <button><a href="{% url 'remove-from-favorite-fav' product.id %}">Remove from Favorite</a></button>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <p class="fav-list-empty">My favorite list is empty.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+        <div class="pagination">
+            <ul class="container">
+                {% if favorite_products.has_previous %}
+                    <li><a href="?page={{ favorite_products.previous_page_number }}" class="btn page-link">&lt;&lt;</a></li>
+                {% endif %}
+                {% if favorite_products.number > 2 %}
+                    <li><a href="?page=1" class="btn page-link">1</a></li>
+                    <li class="btn page-link">...</li>
+                {% endif %}
+                {% for page in favorite_products.paginator.page_range %}
+                    {% if page == favorite_products.number %}
+                        <li><a href="?page={{ page }}" class="btn page-link btn--sub">{{ page }}</a></li>
+                    {% elif page > favorite_products.number|add:"-3" and page < favorite_products.number|add:"3" %}
+                        <li><a href="?page={{ page }}" class="btn page-link">{{ page }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                {% if favorite_products.number < favorite_products.paginator.num_pages|add:"-2" %}
+                    <li class="btn page-link">...</li>
+                    <li><a href="?page={{ favorite_products.paginator.num_pages }}" class="btn page-link">{{ favorite_products.paginator.num_pages }}</a></li>
+                {% endif %}
+                {% if favorite_products.has_next %}
+                    <li><a href="?page={{ favorite_products.next_page_number }}" class="btn page-link">>>&gt;</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+    {% endblock %}

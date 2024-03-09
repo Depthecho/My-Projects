@@ -1,0 +1,186 @@
+{% extends 'mainpage/base.html' %}
+{% load static %}
+{% load ratings_tags %}
+{% block title %}Store{% endblock %}
+
+{% block content %}
+{% include 'mainpage/main_header.html' %}
+
+
+<div class="store-page-body">
+
+    <div class="empty-space">
+        <h1 class="store-header">
+            Store
+        </h1>
+    </div>
+
+    <section class="store-page-main">
+        <div class="store-page-content">
+            <div class="sort-products">
+                <div class="sort-by-category">
+                    <form method="get" action="{% url 'store-page' %}">
+                        <label for="price_min">Price Range:</label>
+                        <input type="number" name="price_min" id="price_min" step="1" placeholder="Min Price">
+                        <input type="number" name="price_max" id="price_max" step="1" placeholder="Max Price">
+                        <select name="sort_by" class="sort-by-select">
+                            <option value="">Sort By</option>
+                            <option value="price_low">Price Low to High</option>
+                            <option value="price_high">Price High to Low</option>
+                            <option value="rating_high">Rating High to Low</option>
+                            <option value="rating_low">Rating Low to High</option>
+                        </select>
+                        <div class="slidecontainer">
+                            <div id="price-slider"></div>
+                            <span id="price-range"></span>
+                        </div>
+                        <label for="category">Sort by Category:</label>
+                        <select id="category" name="category">
+                            <option value="all">All Categories</option>
+                            {% for cat in categories %}
+                            <option value="{{ cat.name }}">{{ cat.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" id="apply-button" class="apply-sort">Apply</button>
+                    </form>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.js"></script>
+
+                    <script>
+                        var priceSlider = document.getElementById('price-slider');
+                        var priceRange = document.getElementById('price-range');
+                        var applyButton = document.getElementById('apply-button');
+                        var minValueInput = document.getElementById('price_min');
+                        var maxValueInput = document.getElementById('price_max');
+
+                        noUiSlider.create(priceSlider, {
+                            start: [50, 1000],
+                            connect: true,
+                            range: {
+                                'min': 50,
+                                'max': 1000
+                            }
+                        });
+
+                        var priceValues = [50, 1000];
+
+                        priceSlider.noUiSlider.on('update', function (values, handle) {
+                            priceValues[handle] = parseInt(values[handle]);
+                            var priceText = priceValues.join(' - ');
+                            priceRange.innerHTML = priceText;
+                        });
+
+                        applyButton.addEventListener('click', function () {
+                            var minValue = priceValues[0];
+                            var maxValue = priceValues[1];
+
+                            minValueInput.value = minValue;
+                            maxValueInput.value = maxValue;
+                        });
+                    </script>
+                </div>
+            </div>
+            <div class="store-page-container{% if products|length < 9 %} height-1300{% endif %}">
+                <div class="products-header">
+                    {% if is_manager %}
+                    <button class="create-product-button"><a href="{% url 'create-product' %}">Create a product</a></button>
+                    {% endif %}
+                    <form method="get" class="items-per-page">
+                        <label for="itemsPerPage">Items per Page:</label>
+                        <select id="itemsPerPage" name="itemsPerPage">
+                            <option value="9" {% if request.session.items_per_page == 9 %}selected{% endif %}>9
+                            </option>
+                            <option value="12" {% if request.session.items_per_page == 12 %}selected{% endif %}>12
+                            </option>
+                            <option value="18" {% if request.session.items_per_page == 18 %}selected{% endif %}>18
+                            </option>
+                            <option value="24" {% if request.session.items_per_page == 24 %}selected{% endif %}>24
+                            </option>
+                            <option value="30" {% if request.session.items_per_page == 30 %}selected{% endif %}>30
+                            </option>
+                        </select>
+                        <script>
+                            document.getElementById('itemsPerPage').addEventListener('change', function () {
+                                const selectedValue = this.value;
+                                const currentURL = window.location.href;
+                                const url = new URL(currentURL);
+                                url.searchParams.set('itemsPerPage', selectedValue);
+                                window.location.href = url.toString();
+                            });
+                        </script>
+                    </form>
+                    <div class="types-of-view-products">
+                        <div class="sort-by-square type-of-view-products" id="grid-view-button">
+                            <a href="?view_mode=grid"><i class='bx bxs-grid'></i></a>
+                        </div>
+                        <div class="sort-by-string type-of-view-products type-of-view-products-selected"
+                             id="list-view-button">
+                            <a href="?view_mode=list"><i class='bx bx-menu'></i></a>
+                        </div>
+                    </div>
+                </div>
+                {% for product in products %}
+                <div class="products-list">
+                    <h2><a href="{% url 'product-detail' product.slug %}">{{ product.name }}</a></h2>
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    {% endif %}
+                    {% if product in request.user.favorite_products.all %}
+                    <a href="{% url 'remove-from-favorite' product.id %}"><i class="favorite-good bx bxs-star"></i></a>
+                    {% else %}
+                    <a href="{% url 'add-to-favorite' product.id %}"><i class="favorite-good bx bx-star"></i></a>
+                    {% endif %}
+                    {% if is_manager %}
+                    <a href="{% url 'update-product' product.id %}"><i class='bx bx-revision'></i></a>
+                    <form method="post" class="delete-product-form" action="{% url 'delete-product' product.id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                       <a href="#" onclick="this.parentNode.submit(); return false;"><i class='bx bx-x'></i></a>
+                    </form>
+                    {% endif %}
+                    <p><b>Category:</b> {{ product.category }}</p>
+                    {% if product.discount %}
+                    <p><b>Price:</b> <del>${{ product.price }}</del> <span style="color: red;">${{ product.discounted_price|floatformat:2 }}</span></p>
+                    {% else %}
+                    <p><b>Price:</b> ${{ product.price }}</p>
+                    {% endif %}
+                     <p><b>Rating:</b> {% calculate_average_rating product.id %}</p>
+                    {% if product.quantity > 0 %}
+                    <form method="post" action="{% url 'add-to-cart' product.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="buy-button">Buy</button>
+                    </form>
+                    {% else %}
+                    <p class="out-of-stock">Out of Stock</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            <div class="pagination">
+    <ul class="container">
+        {% if products.has_previous %}
+            <li><a href="?page={{ products.previous_page_number }}&view_mode={{ view_mode }}&itemsPerPage={{ items_per_page }}" class="btn page-link">&lt;<<</a></li>
+        {% endif %}
+        {% if products.number > 2 %}
+            <li><a href="?page=1&view_mode={{ view_mode }}&itemsPerPage={{ items_per_page }}" class="btn page-link">1</a></li>
+            <li class="btn page-link">...</li>
+        {% endif %}
+        {% for page in products.paginator.page_range %}
+            {% if page == products.number %}
+                <li><a href="?page={{ page }}&view_mode={{ view_mode }}&itemsPerPage={{ items_per_page }}" class="btn page-link btn--sub">{{ page }}</a></li>
+            {% elif page > products.number|add:"-3" and page < products.number|add:"3" %}
+                <li><a href="?page={{ page }}&view_mode={{ view_mode }}&itemsPerPage={{ items_per_page }}" class="btn page-link">{{ page }}</a></li>
+            {% endif %}
+        {% endfor %}
+        {% if products.number < products.paginator.num_pages|add:"-2" %}
+            <li class="btn page-link">...</li>
+            <li><a href="?page={{ products.paginator.num_pages }}&view_mode={{ view_mode }}&itemsPerPage={{ items_per_page }}" class="btn page-link">{{ products.paginator.num_pages }}</a></li>
+        {% endif %}
+        {% if products.has_next %}
+            <li><a href="?page={{ products.next_page_number }}&view_mode={{ view_mode }}&itemsPerPage={{ items_per_page }}" class="btn page-link">>>&gt;</a></li>
+        {% endif %}
+    </ul>
+</div>
+        </div>
+    </section>
+</div>
+{% endblock %}

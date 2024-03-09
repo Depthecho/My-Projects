@@ -1,0 +1,24 @@
+{% extends 'skills/base.html' %}
+{% load static %}
+
+{% block content %}
+<h1>Developer portfolio</h1>
+<div class="img">
+    <img src="{% static 'skills/wc.jpg' %}" alt="">
+</div>
+
+<h2>Technology stack</h2>
+<div class="block">
+    {% for skill in skills %}
+    <div class="element">
+        <div>
+            <img src="{{ skill.image.url }}" alt="">
+        </div>
+        <div class="text">
+            <h2><a href="{{ skill.url }}" target="_blank"> {{ skill.title }}</a></h2>
+            <p>{{ skill.description }}</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+{{ super() }}
+{% for cat, msg in get_flashed_messages(True) %}
+        <div class="flash {{ cat }}">{{ msg }}</div>
+{% endfor %}
+<form method="post" action="/add_catalog" class="form-add-shoe">
+    <p>Название обуви: <input type="text" name="name" required></p>
+    <p>Описание обуви: <input type="text" name="description" required></p>
+    <p>Размер обуви: <input type="text" name="size" required> </p>
+    <p>Цена обуви: <input type="text" name="price" required> </p>
+    <p>URL of post: <input type="text" name="url" required></p>
+    <p><input type="submit" value="Add a shoe" class="add-shoe-btn"></p>
+</form>
+{% endblock %}

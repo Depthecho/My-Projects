@@ -1,0 +1,58 @@
+{% extends 'mainpage/base.html' %}
+{% load static %}
+{% load cart_tags %}
+{% block title %}Orders{% endblock %}
+
+{% block content %}
+{% include 'mainpage/main_header.html' %}
+<div class="orders-page-body">
+
+    <div class="empty-space">
+        <h1 class="store-header">
+            My orders
+        </h1>
+    </div>
+
+    <section class="orders-page-main">
+        <div class="orders-page-content">
+            <div class="orders-page-container{% if orders|length < 14 %} height-1300{% endif %}">
+                <ul>
+                    {% for order in orders %}
+                    <li>
+                        <h2><a href="{% url 'order-detail' order.id %}">Order Number: {{ order.order_number }}</a></h2>
+                        <p>Total Price: ${{ order.total_price }}</p>
+                        <p>Date: {{ order.order_date }}</p>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="pagination">
+                <ul class="container">
+                    {% if orders.has_previous %}
+                    <li><a href="?page={{ orders.previous_page_number }}" class="btn page-link">&lt;<<</a></li>
+                    {% endif %}
+                    {% if orders.number > 2 %}
+                    <li><a href="?page=1" class="btn page-link">1</a></li>
+                    <li class="btn page-link">...</li>
+                    {% endif %}
+                    {% for page in orders.paginator.page_range %}
+                    {% if page == orders.number %}
+                    <li><a href="?page={{ page }}" class="btn page-link btn--sub">{{ page }}</a></li>
+                    {% elif page > orders.number|add:"-3" and page < orders.number|add:"3" %}
+                    <li><a href="?page={{ page }}" class="btn page-link">{{ page }}</a></li>
+                    {% endif %}
+                    {% endfor %}
+                    {% if orders.number < orders.paginator.num_pages|add:"-2" %}
+                    <li class="btn page-link">...</li>
+                    <li><a href="?page={{ orders.paginator.num_pages }}" class="btn page-link">{{
+                        orders.paginator.num_pages }}</a></li>
+                    {% endif %}
+                    {% if orders.has_next %}
+                    <li><a href="?page={{ orders.next_page_number }}" class="btn page-link">>>&gt;</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

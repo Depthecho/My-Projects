@@ -1,0 +1,69 @@
+{% extends 'mainpage/base.html' %}
+{% load static %}
+{% block title %}My settings{% endblock %}
+
+{% block content %}
+{% include 'mainpage/main_header.html' %}
+
+<div class="settings-page-body">
+    <div class="empty-space">
+        <h1 class="store-header">
+            My settings
+        </h1>
+    </div>
+
+    <section class="settings-page-main">
+        <div class="settings-page-content">
+            <div class="main-settings">
+                <ul>
+                    <li><a href="?setting=appearance">Appearance</a></li>
+                    <li><a href="?setting=confidentiality">Confidentiality</a></li>
+                </ul>
+            </div>
+            <div class="settings-page-container" id="settings-container">
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% if selected_setting == 'appearance' %}
+                <div class="appearance-settings">
+                    <div class="setttings-block">
+                        <p>My theme:</p>
+                        <button class="swap-theme">
+                            <i class="theme-indicator fa-regular fa-moon fa-2xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% elif selected_setting == 'confidentiality' %}
+            {% if user.is_authenticated %}
+            <div class="change-password-form">
+                <h2 class="change-password-header">Change Password</h2>
+
+
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="change-password-fields">
+                        <p class="change-password-label">{{ password_change_form.current_password.label }}</p>
+                            <p>{{ password_change_form.current_password }}</p>
+                        <p class="change-password-label">{{ password_change_form.new_password1.label }}</p>
+                            <p>{{ password_change_form.new_password1 }}</p>
+                        <p class="change-password-label">{{ password_change_form.new_password2.label }}</p>
+                            <p>{{ password_change_form.new_password2 }}</p>
+                    </div>
+                    <button class="change-password-button" type="submit">Change Password</button>
+                </form>
+            </div>
+            {% else %}
+                <p class="non-user-alert">To begin with, you must <a href="{% url 'login-page' %}">log in</a></p>
+            {% endif %}
+            {% endif %}
+        </div>
+    </section>
+
+</div>
+{% endblock %}

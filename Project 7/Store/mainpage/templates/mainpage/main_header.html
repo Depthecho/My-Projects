@@ -1,0 +1,72 @@
+<header class="main-header">
+    <div class="header-container">
+        <div class="logo">
+            <a href="{% url 'store-page' %}">Depthecho</a>
+        </div>
+        <div class="search">
+            <form method="get" action="{% url 'store-page' %}">
+            <input type="text" name="search" id="search" {% if not search_query == None %} value="{{ search_query }}" {% endif %} placeholder="Enter a product name">
+            <button type="submit" class="search-button"><i class='bx bx-search-alt-2'></i></button>
+            </form>
+        </div>
+        <nav class="main-nav">
+            <ul class="collapsed-menu">
+                <li class="collapsed-menu-li collapsed-menu-active"><a href="{% url 'store-page' %}"><i
+                        class='bx bx-home'></i><br>
+                    <p class="text">Store</p>
+                </a></li>
+                <li class="collapsed-menu-li"><a href="{% url 'cart' %}"><i class='bx bx-cart'></i><br>
+                    <p class="text">Cart</p>
+                </a></li>
+                <li class="collapsed-menu-li"><a href="{% url 'orders' %}"><i class='bx bx-notepad'></i><br>
+                    <p class="text">Orders</p>
+                </a></li>
+                <li class="collapsed-menu-li"><a href="{% url 'favorite-list' %}"><i class='bx bx-star'></i><br>
+                    <p class="text">Favorite</p>
+                </a></li>
+                <li class="dropdown">
+                    <a href="#" id="burger-button" onclick="toggleDropdown()"><i class='bx bx-menu'></i></a>
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <ul>
+                            <li class="dropdown-menu-li dropdown-menu-afterline">
+                                {% if profile.avatar %}
+                                <img class="profile-avatar" src="{{ profile.avatar.url }}" alt="profile avatar">
+                                {% endif %}
+                                <a href="{% url 'profile' %}">Profile</a>
+                            </li>
+                            <li class="dropdown-menu-li dropdown-menu-afterline">
+                                <a href="{% url 'settings' %}">Settings</a>
+                            </li>
+                            <li class="dropdown-menu-li" id="dropdown-menu-logout">
+                                {% if user.is_authenticated %}
+                                <a href="{% url 'log-out' %}">Log Out</a>
+                                {% else %}
+                                <a href="{% url 'login-page' %}">Log In</a>
+                                {% endif %}
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <script>
+        // Function to toggle dropdown menu visibility
+        function toggleDropdown() {
+            var dropdownMenu = document.getElementById("dropdownMenu");
+            var dropdownMenuButton = document.getElementById("burger-button");
+            if (dropdownMenu.style.display === "block") {
+                dropdownMenu.style.display = "none";
+                dropdownMenuButton.style.setProperty("color", "white", "important")
+            } else {
+            if (localStorage.getItem("darkmode") == "true"){
+                dropdownMenu.style.display = "block";
+                dropdownMenuButton.style.setProperty("color", "var(--main-dark-theme-color)", "important")
+                }else {
+            dropdownMenu.style.display = "block";
+                dropdownMenuButton.style.setProperty("color", "var(--main-light-theme-color)", "important")
+            }
+            }
+        }
+    </script>
+</header>

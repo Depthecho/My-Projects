@@ -1,0 +1,102 @@
+{% extends 'pagestore/base.html' %}
+{% load static %}
+
+{% block title %} Store {% endblock %}
+{% block body %}
+<header class="home-header">
+    <div class="home-logo">
+        <p>Depthecho</p>
+    </div>
+    <div class="home-searchbar">
+        <div class="search">
+            <input class="search-input" type="text">
+            <i class='bx bx-search-alt-2'></i>
+        </div>
+    </div>
+    <div class="home-navbar">
+        <a href="{% url 'favorite_products' %}" class="nav-favs home-navs"><i class='bx bx-star'><br>Favorite</i></a>
+        <a href="{% url 'cart' %}" class="nav-basket home-navs"><i class='bx bx-basket'><br>Cart</i></a>
+        <a href="{% url 'orders' %}" class="nav-orders home-navs"><i class='bx bxs-purchase-tag'><br>Orders</i></a>
+        <a href="{% url 'homepage' %}" class="nav-home home-navs"><i class='bx bx-home'><br>Home</i></a>
+    </div>
+    {% if user.is_authenticated %}
+    <div class="loginout-button">
+        <form method="post" action="{% url 'logoutpage' %}">
+            {% csrf_token %}
+            <button type="submit">Log Out</button>
+        </form>
+    </div>
+    {% else %}
+    <div class="loginout-button">
+        <form method="post" action="{% url 'loginpage' %}">
+            {% csrf_token %}
+            <button type="submit">Log In</button>
+        </form>
+    </div>
+    {% endif %}
+</header>
+
+<div class="home-empty"></div>
+
+<section class="products">
+    <div class="sort-by-price">
+        <form method="get" action="{% url 'homepage' %}">
+            <label for="price_min">Min Price:</label>
+            <input type="number" name="price_min" id="price_min" step="0.01">
+            <label for="price_max">Max Price:</label>
+            <input type="number" name="price_max" id="price_max" step="0.01">
+            <select name="sort_by" class="sort-by-select">
+                <option value="">Sort By</option>
+                <option value="price_low">Price Low to High</option>
+                <option value="price_high">Price High to Low</option>
+            </select>
+            <button type="submit" class="apply-sort">Apply</button>
+        </form>
+    </div>
+    <div class="sort-by-categories">
+        <form method="get" action="{% url 'homepage' %}">
+            <select name="category">
+                <option value="">Choose a category</option>
+                <option value="Keyboard">Keyboard</option>
+                <option value="Mouse">Mouse</option>
+                <option value="Microphone">Microphone</option>
+            </select>
+            <button type="submit">Apply</button>
+        </form>
+    </div>
+    <div class="container">
+        <div class="product-list">
+            {% for product in products %}
+            <div class="product">
+                <img src="{{ product.photo.url }}" alt="{{ product.name }}">
+                <h3><a href="{% url 'product_detail' product.id %}">{{ product.name }}</a></h3>
+                <p>{{ product.description }}</p>
+                <p>Category: {{ product.category }}</p>
+                <p>Price: ${{ product.price }}</p>
+                {% if discount_percentage %}
+                <p>Discounted percentage: ${{ discount_percentage }}</p>
+                <p>Discounted price: ${{ product.discounted_price }}</p>
+                {% endif %}
+                <p>Available: {{ product.quantity }}</p>
+                {% if product.quantity_in_cart %}
+                <p>Items in cart: {{ product.quantity_in_cart }}</p>
+                {% endif %}
+                <form method="post" action="{% url 'add_to_cart' product.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="buy-button">Buy</button>
+                </form>
+                <form method="post" action="{% url 'toggle_favorites' product.id %}">
+                    {% csrf_token %}
+                    {% if product in user_favorites %}
+                        <button type="submit" class="fav-btns remove-from-favorites-button">Remove from Favorites</button>
+                    {% else %}
+                        <button type="submit" class="fav-btns add-to-favorites-button">Add to Favorites</button>
+                    {% endif %}
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}

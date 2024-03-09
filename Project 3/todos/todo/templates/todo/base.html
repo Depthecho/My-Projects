@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+{% if user.is_authenticated %}
+<div class="menu">
+    <div class="wrap">
+        <ul>
+            <li class="logo"><a href="">Пользователь: {{ user.username }}</a></li>
+            <li><a href="{% url 'createtodo' %}">Создать</a></li>
+            <li><a href="{% url 'currenttodos' %}">Актуальные задачи</a></li>
+            <li><a href="{% url 'completedtodos' %}">Выполненные задачи</a></li>
+            <li>
+                <form action="{% url 'logoutuser' %}" method="post">
+                    {% csrf_token %}
+                    <button class="top">Выйти</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+</div>
+{% else %}
+<div class="menu">
+    <div class="wrap">
+        <ul>
+            <li class="logo"><a href="{% url 'home' %}">UpService</a></li>
+            <li><a href="{% url 'signupuser' %}">Зарегистрироваться</a></li>
+            <li><a href="{% url 'loginuser' %}">Войти</a></li>
+        </ul>
+    </div>
+</div>
+{% endif %}
+<div class="content">
+    <div class="wrap">
+        <h4>{{ error }}</h4>
+        {% block content %}
+
+        {% endblock %}
+    </div>
+</div>
+
+</body>
+</html>

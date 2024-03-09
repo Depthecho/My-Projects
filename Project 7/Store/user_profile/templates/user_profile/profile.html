@@ -1,0 +1,50 @@
+{% extends 'mainpage/base.html' %}
+{% load static %}
+{% block title %}My profile{% endblock %}
+
+{% block content %}
+{% include 'mainpage/main_header.html' %}
+
+
+<div class="profile-page-body">
+
+    <div class="empty-space">
+        <h1 class="store-header">
+            My profile
+        </h1>
+    </div>
+
+    <section class="profile-page-main">
+        <div class="profile-page-content">
+            <div class="profile-page-container">
+                <div class="username-and-image">
+                    <h1 class="profile-username">{{ user.username }}</h1>
+                    {% if profile.avatar %}
+                    <img class="profile-avatar" src="{{ profile.avatar.url }}" alt="profile avatar">
+                    {% else %}
+                    <img class="profile-avatar" src="{% static 'avatars/default.png' %}" alt="profile avatar">
+                    {% endif %}
+                    <a href="{% url 'update-profile' %}" class="update-profile">Update profile</a>
+                    <a href="{% url 'delete-profile' %}" class="delete-profile">Delete Profile</a>
+                </div>
+                <div class="profile-information">
+                    <p><strong>Name:</strong> {{ profile.first_name }}</p>
+                    <p><strong>Surname:</strong> {{ profile.last_name }}</p>
+                    <p><strong>E-mail:</strong> {{ profile.email }}</p>
+                    <p><strong>Phone number:</strong> {{ profile.phone_number }}</p>
+                </div>
+                <script>
+                    function something() {
+    const something = "Cool"
+    if (something === "Cool" || something === "Cool2") {
+        console.log("Cool")
+    } else {
+        console.log("Not Cool")
+    }
+}
+                </script>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+{{ super() }}
+<h2>Товары в наличии:</h2>
+{% for shoe in shoes %}
+<ul class="choes-menu"> <p class="shoe-names"><strong><a href="/show-shoe/{{ shoe.url }}">{{ shoe.name }}</a></p>
+    <li>Description: {{ shoe.description | safe }}</li>
+    <li>Size : {{ shoe.size }}</li>
+    <li>Price: {{ shoe.price }}</li>
+</ul>
+{% endfor %}
+{% endblock %}

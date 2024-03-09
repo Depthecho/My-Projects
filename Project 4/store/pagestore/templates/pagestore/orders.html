@@ -1,0 +1,60 @@
+{% extends 'pagestore/base.html' %}
+{% load static %}
+
+{% block title %}Orders{% endblock %}
+{% block body %}
+<header class="home-header">
+    <div class="home-logo">
+        <p>Depthecho</p>
+    </div>
+    <div class="home-searchbar">
+        <div class="search">
+            <input class="search-input" type="text">
+            <i class='bx bx-search-alt-2'></i>
+        </div>
+    </div>
+    <div class="home-navbar">
+        <a href="{% url 'favorite_products' %}" class="nav-favs home-navs"><i class='bx bx-star'><br>Favorite</i></a>
+        <a href="{% url 'cart' %}" class="nav-basket home-navs"><i class='bx bx-basket'><br>Cart</i></a>
+        <a href="{% url 'orders' %}" class="nav-orders home-navs"><i class='bx bxs-purchase-tag'><br>Orders</i></a>
+        <a href="{% url 'homepage' %}" class="nav-home home-navs"><i class='bx bx-home'><br>Home</i></a>
+    </div>
+    {% if user.is_authenticated %}
+    <div class="loginout-button">
+        <form method="post" action="{% url 'logoutpage' %}">
+            {% csrf_token %}
+            <button type="submit">Log Out</button>
+        </form>
+    </div>
+    {% else %}
+    <div class="loginout-button">
+        <form method="post" action="{% url 'loginpage' %}">
+            {% csrf_token %}
+            <button type="submit">Log In</button>
+        </form>
+    </div>
+    {% endif %}
+</header>
+<div class="home-empty"></div>
+<section class="orders">
+    <div class="orders-container">
+        <h2 class="orders-header">Your Orders</h2>
+        <div class="order-list">
+            {% for order in user_orders %}
+            <div class="order">
+                <p>Date Created: {{ order.date_created }}</p>
+                <p>Total Cost: ${{ order.total_cost }}</p>
+                <ul>
+                    {% for product in order.products.all %}
+                    <li>{{ product.name }} - ${{ product.price }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% if not forloop.last %}
+            <div class="order-divider"></div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

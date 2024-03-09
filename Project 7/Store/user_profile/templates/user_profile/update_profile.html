@@ -1,0 +1,29 @@
+{% extends 'mainpage/base.html' %}
+{% load static %}
+{% block title %}Update profile{% endblock %}
+
+{% block content %}
+{% include 'mainpage/main_header.html' %}
+
+
+<div class="profile-page-body">
+
+    <div class="empty-space">
+        <h1 class="store-header">
+            Update profile
+        </h1>
+    </div>
+
+    <section class="update-profile-page-main">
+        <div class="update-profile-page-content">
+            <div class="update-profile-page-container">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

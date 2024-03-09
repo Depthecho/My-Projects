@@ -1,0 +1,71 @@
+{% extends 'mainpage/base.html' %}
+{% load static %}
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+{% include 'mainpage/main_header.html' %}
+<div class="product-detail-body">
+
+    <div class="empty-space">
+        <h1 class="store-header">
+            Product detail
+        </h1>
+    </div>
+
+    <section class="product-detail-main">
+        <div class="product-detail-content">
+            <div class="product-detail-container {% if not user.is_authenticated %} {% if not comments %}
+            height-1300 {% endif %} {% elif user.is_authenticated %} {% if not comments %} height-1300 {% endif %}  {% endif %}">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                {% endif %}
+                <h1>{{ product.name }}</h1>
+                <p><b>Category:</b> {{ product.category }}</p>
+                <p><b>Description:</b> {{ product.description }}</p>
+                <p><b>Price:</b> ${{ product.price }}</p>
+
+                <form method="post" action="{% url 'add-to-cart' product.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="buy-button">Buy</button>
+                </form>
+                {% if user.is_authenticated %}
+                {% if not user_comment %}
+                <div class="product-comment-form">
+                    <h2>Add a Comment:</h2>
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button class="add-comment-btn" type="submit">Add Comment</button>
+                    </form>
+                </div>
+                {% endif %}
+                {% else %}
+                <div class="all-comments">
+                <p >Please <a href="{% url 'login-page' %}">log in</a> to leave a comment.</p>
+                    </div>
+                {% endif %}
+                {% if comments %}
+                <div class="all-comments">
+                    <h2>Reviews:</h2>
+                    <ul>
+                        {% for comment in comments %}
+                        <li>
+                            <div class="all-about-comment">
+                                <img src="{{ comment.user.profile.avatar.url }}"
+                                     alt="{{ comment.user.username }}-avatar">
+                                <h3 class="username-comment"><strong>{{ comment.user.username }}</strong></h3>
+                                <p class="user-rating">Rating: {{ comment.rating }}/5</p>
+                                <p class="user-comment">{{ comment.comment }}</p>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+
+        </div>
+    </section>
+</div>
+
+{% endblock %}

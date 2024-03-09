@@ -1,0 +1,72 @@
+{% extends 'pagestore/base.html' %}
+{% load static %}
+
+{% block title %}Cart{% endblock %}
+{% block body %}
+<header class="home-header">
+    <div class="home-logo">
+        <p>Depthecho</p>
+    </div>
+    <div class="home-searchbar">
+        <div class="search">
+            <input class="search-input" type="text">
+            <i class='bx bx-search-alt-2'></i>
+        </div>
+    </div>
+    <div class="home-navbar">
+        <a href="{% url 'favorite_products' %}" class="nav-favs home-navs"><i class='bx bx-star'><br>Favorite</i></a>
+        <a href="{% url 'cart' %}" class="nav-basket home-navs"><i class='bx bx-basket'><br>Cart</i></a>
+        <a href="{% url 'orders' %}" class="nav-orders home-navs"><i class='bx bxs-purchase-tag'><br>Orders</i></a>
+        <a href="{% url 'homepage' %}" class="nav-home home-navs"><i class='bx bx-home'><br>Home</i></a>
+    </div>
+    {% if user.is_authenticated %}
+    <div class="loginout-button">
+        <form method="post" action="{% url 'logoutpage' %}">
+            {% csrf_token %}
+            <button type="submit">Log Out</button>
+        </form>
+    </div>
+    {% else %}
+    <div class="loginout-button">
+        <form method="post" action="{% url 'loginpage' %}">
+            {% csrf_token %}
+            <button type="submit">Log In</button>
+        </form>
+    </div>
+    {% endif %}
+</header>
+
+<div class="home-empty"></div>
+
+<section class="cart">
+    <div class="cart-container">
+        <h2 class="cart-header">Your Cart</h2><br>
+        <div class="product-list">
+            {% for item in cart_items %}
+            <div class="product">
+                <img src="{{ item.product.photo.url }}" alt="{{ item.product.name }}">
+                <h3><a href="{% url 'product_detail' item.product.id %}">{{ item.product.name }}</a></h3>
+                <p>{{ item.product.description }}</p>
+                <p>Price: ${{ item.product.price }}</p>
+                <p>Quantity in Cart: {{ item.quantity_in_cart }}</p>
+                <form method="post" action="{% url 'cart' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="product_id" value="{{ item.product.id }}">
+                    <button type="submit" class="remove-button">Remove</button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="cart-purchase">
+            <div class="total-cost">
+                Total cost: ${{ total_cost }}
+            </div>
+
+            <form method="post" action="{% url 'purchase_all' %}">
+                {% csrf_token %}
+                <button type="submit" class="buy-all-button">Buy All</button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

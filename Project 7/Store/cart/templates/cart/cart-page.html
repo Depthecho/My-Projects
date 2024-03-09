@@ -1,0 +1,97 @@
+{% extends 'mainpage/base.html' %}
+{% load static %}
+{% load cart_tags %}
+{% block title %}Cart{% endblock %}
+
+{% block content %}
+{% include 'mainpage/main_header.html' %}
+<div class="cart-page-body">
+
+    <div class="empty-space">
+        <h1 class="store-header">
+            My cart
+        </h1>
+    </div>
+
+    <section class="cart-page-main">
+        <div class="cart-page-content">
+            <div class="cart-page-container{% if cart_items|length < 9 %} height-1300{% endif %}">
+                {% if cart_items %}
+               {% for cart_item in cart_items %}
+    <div class="products cart-products">
+        <h2><a href="{% url 'product-detail' cart_item.product.slug %}">{{ cart_item.product.name|slice:":30" }}...</a></h2>
+        {% if cart_item.product.image %}
+            <img src="{{ cart_item.product.image.url }}" alt="{{ cart_item.product.name }}">
+        {% endif %}
+        <p><b>Category:</b> {{ cart_item.product.category }}</p>
+        {% if cart_item.product.discount %}
+            <p class="discounted-price">${{ cart_item.product.discounted_price|floatformat:2 }}</p>
+        {% else %}
+            <p><b>Price:</b> ${{ cart_item.product.price }}</p>
+        {% endif %}
+
+        <form action="{% url 'update-cart' cart_item.product.id %}" method="post">
+            {% csrf_token %}
+            <label for="quantity">Quantity:</label>
+            <input type="number" name="cart_quantity" value="{{ cart_item.cart_quantity }}">
+            <input type="hidden" name="product_id" value="{{ cart_item.product.id }}">
+            <button type="submit" class="update-cart-button">Update</button>
+        </form>
+
+        <form action="{% url 'remove-from-cart' cart_item.product.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="remove-from-cart-button">Remove from Cart</button>
+        </form>
+    </div>
+{% endfor %}
+            </div>
+            <div class="cart-purchase">
+                {% if cart_items %}
+                <p><b>Total Items:</b> {{ total_quantity }}</p>
+                <p><b>Total Price:</b> ${{ cart_items|total_price|floatformat:2 }}</p>
+                <form action="#" method="post">
+                    {% csrf_token %}
+                    <select name="payment-method" id="payment-method">
+                        <option value="cash">With cash</option>
+                        <option value="card">With card</option>
+                    </select>
+                    <button type="submit" class="purchase-button"><a href="{% url 'add_to_order' %}">Purchase All</a></button>
+                </form>
+                {% endif %}
+            </div>
+             <div class="pagination">
+                <ul class="container">
+                    {% if cart_items.has_previous %}
+                    <li><a href="?page={{ cart_items.previous_page_number }}" class="btn page-link">&lt;<<</a></li>
+                    {% endif %}
+                    {% if cart_items.number > 2 %}
+                    <li><a href="?page=1" class="btn page-link">1</a></li>
+                    <li class="btn page-link">...</li>
+                    {% endif %}
+                    {% for page in cart_items.paginator.page_range %}
+                    {% if page == cart_items.number %}
+                    <li><a href="?page={{ page }}" class="btn page-link btn--sub">{{ page }}</a></li>
+                    {% elif page > cart_items.number|add:"-3" and page < cart_items.number|add:"3" %}
+                    <li><a href="?page={{ page }}" class="btn page-link">{{ page }}</a></li>
+                    {% endif %}
+                    {% endfor %}
+                    {% if cart_items.number < cart_items.paginator.num_pages|add:"-2" %}
+                    <li class="btn page-link">...</li>
+                    <li><a href="?page={{ cart_items.paginator.num_pages }}" class="btn page-link">{{
+                        cart_items.paginator.num_pages }}</a></li>
+                    {% endif %}
+                    {% if cart_items.has_next %}
+                    <li><a href="?page={{ cart_items.next_page_number }}" class="btn page-link">>>&gt;</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            {% else %}
+            <p class="cart-empty">My cart is empty.</p>
+        {% endif %}
+
+</div>
+</section>
+</div>
+
+{% endblock %}

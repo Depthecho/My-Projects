@@ -1,0 +1,109 @@
+:root{
+    --bg-color: #1f242d; 
+    --second-bg-color: #323946;
+    --text-color: #fff;
+    --main-color: #7FFFD4;
+    --second-main-color: #15E8A1;
+}
+
+body{
+    background-color: var(--bg-color);
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+}
+
+.container{
+    width: 1110px;
+    margin: 0 auto;
+    padding: 0;
+
+    text-align: center;
+    color: var(--text-color);
+    vertical-align: middle;
+}
+
+h1{
+    color: var(--second-main-color)
+}
+
+.container ul li{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.container h2{
+    color: var(--main-color)
+}
+
+
+.flash{
+    margin-left: 22em;
+    padding: 10px;
+    width: 360px;
+}
+
+.flash.success{
+    text-align: center;
+    border: 1px solid #21B856;
+    background-color: #AEFFC5;
+}
+
+.flash.error{
+    text-align: center;
+    border: 1px solid #FF5343;
+    background-color: #FF9C9C;
+}
+
+.container a:link{
+    text-align: center;
+    color: var(--text-color);
+}
+
+.container a:active, .container a:hover{
+    text-decoration: none;
+    color: var(--main-color);
+}
+
+.container a:visited{
+    color: var(--second-main-color)
+}
+
+.shoe-names{
+    color: var(--second-main-color)
+}
+
+.container ul.menu{
+    margin: 0;
+    padding: 0;
+}
+
+.container ul.menu li{
+    margin: 5px;
+}
+
+.add-shoe-btn{
+    padding: 7px;
+    border-radius: 50%;
+    background-color: var(--second-bg-color);
+    color: var(--text-color);
+    border-color: var(--main-color);
+}
+
+.form-add-shoe p{
+    text-align: center;
+}
+
+.shoes-menu{
+    text-align: center;
+    padding: 0;
+    margin: 0;
+}
+
+.container a{
+    text-align: center;
+    padding: 0;
+    margin: 0;
+}
+
